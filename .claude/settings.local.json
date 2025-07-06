@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install)",
+      "Bash(mv:*)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:upload.wikimedia.org)"
+    ],
+    "deny": []
+  }
+}
