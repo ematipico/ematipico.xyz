@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+/* Tailwind v4 Dark Mode Configuration */
+@variant dark (.dark &);
+
+/* Custom font family */
+@utility font-mono {
+  font-family: ui-monospace, SFMono-Regular, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}

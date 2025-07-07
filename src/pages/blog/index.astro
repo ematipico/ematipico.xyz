@@ -9,16 +9,16 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
 <Layout title="Blog - Emanuele Stoppa" description="Articles about web development, software engineering, and technology.">
   <div class="space-y-8">
     <div class="text-center space-y-4">
-      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Blog</h1>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-        Thoughts on web development, software engineering, and technology.
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Blog</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        I post something, rarely. Thoughts, ideas, and opinions about web development, software engineering, and technology.
       </p>
     </div>
 
     {sortedPosts.length > 0 ? (
       <div class="grid gap-8">
         {sortedPosts.map((post) => (
-          <article class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+          <article class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
             {post.data.heroImage && (
               <img
                 src={post.data.heroImage}
@@ -28,7 +28,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
             )}
             <div class="p-6 space-y-4">
               <div class="flex items-center justify-between">
-                <time class="text-sm text-gray-500" datetime={post.data.pubDate.toISOString()}>
+                <time class="text-sm text-gray-500 dark:text-gray-400" datetime={post.data.pubDate.toISOString()}>
                   {post.data.pubDate.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -36,17 +36,17 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
                   })}
                 </time>
               </div>
-              <h2 class="text-xl font-semibold text-gray-900">
-                <a href={`/blog/${post.slug}`} class="hover:text-blue-600 transition-colors">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                <a href={`/blog/${post.slug}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   {post.data.title}
                 </a>
               </h2>
-              <p class="text-gray-600 leading-relaxed">
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                 {post.data.description}
               </p>
-              <a 
+              <a
                 href={`/blog/${post.slug}`}
-                class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+                class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
               >
                 Read more →
               </a>
@@ -56,7 +56,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
       </div>
     ) : (
       <div class="text-center py-12">
-        <p class="text-gray-500 text-lg">
+        <p class="text-gray-500 dark:text-gray-400 text-lg">
           No blog posts yet. Check back soon!
         </p>
       </div>
