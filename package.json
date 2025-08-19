@@ -10,11 +10,21 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.11.0"
+    "@astrojs/mdx": "0.3.0",
+    "astro": "^5.12.9",
+    "satori": "^0.16.2",
+    "satori-astro": "^0.3.0",
+    "satori-html": "^0.3.2",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@biomejs/biome": "2.1.4",
+    "@eslint/js": "^9.33.0",
     "@tailwindcss/vite": "^4.1.11",
+    "eslint": "^9.33.0",
+    "globals": "^16.3.0",
+    "oxlint": "1.11.2",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3"
   }

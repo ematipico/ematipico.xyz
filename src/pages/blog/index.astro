@@ -1,12 +1,14 @@
 ---
-import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+
 
 const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const sortedPosts = allPosts.filter(p => !p.data.draft).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<Layout title="Blog - Emanuele Stoppa" description="Articles about web development, software engineering, and technology.">
+<Layout title="Blog - Emanuele Stoppa" description="Articles about web development, software engineering, and technology." ogImage="/og/blog.png">
   <div class="space-y-8">
     <div class="text-center space-y-4">
       <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Blog</h1>
@@ -20,10 +22,14 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
         {sortedPosts.map((post) => (
           <article class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
             {post.data.heroImage && (
-              <img
+              <Picture
                 src={post.data.heroImage}
-                alt={post.data.title}
+                alt={post.data.heroAltImage || post.data.title}
+                width={600}
+                height={192}
                 class="w-full h-48 object-cover"
+                formats={['avif', 'webp']}
+                layout="constrained"
               />
             )}
             <div class="p-6 space-y-4">
@@ -37,7 +43,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
                 </time>
               </div>
               <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                <a href={`/blog/${post.slug}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <a href={`/blog/${post.data.slug}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   {post.data.title}
                 </a>
               </h2>
@@ -45,7 +51,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
                 {post.data.description}
               </p>
               <a
-                href={`/blog/${post.slug}`}
+                href={`/blog/${post.data.slug}`}
                 class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
               >
                 Read more →

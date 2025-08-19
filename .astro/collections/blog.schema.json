@@ -10,6 +10,9 @@
         "description": {
           "type": "string"
         },
+        "slug": {
+          "type": "string"
+        },
         "pubDate": {
           "anyOf": [
             {
@@ -29,6 +32,12 @@
         "heroImage": {
           "type": "string"
         },
+        "heroAltImage": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "boolean"
+        },
         "$schema": {
           "type": "string"
         }
@@ -36,7 +45,10 @@
       "required": [
         "title",
         "description",
-        "pubDate"
+        "slug",
+        "pubDate",
+        "heroImage",
+        "heroAltImage"
       ],
       "additionalProperties": false
     }

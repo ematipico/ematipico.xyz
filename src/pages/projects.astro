@@ -6,7 +6,7 @@ const allProjects = await getCollection('projects');
 const sortedProjects = allProjects.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
 ---
 
-<Layout title="Projects - Emanuele Stoppa" description="Open source projects I've contributed to">
+<Layout title="Projects - Emanuele Stoppa" description="Open source projects I've contributed to" ogImage="/og/projects.png">
   <div class="space-y-8">
     <div class="text-center space-y-4">
       <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Projects</h1>
@@ -28,7 +28,7 @@ const sortedProjects = allProjects.sort((a, b) => (a.data.order || 999) - (b.dat
             </div>
             <div class="flex-1 space-y-3">
               <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 !m-0">
                   {project.data.name}
                 </h2>
                 <a 
@@ -48,7 +48,7 @@ const sortedProjects = allProjects.sort((a, b) => (a.data.order || 999) - (b.dat
               </p>
               {project.data.contributions && (
                 <div class="pt-3 border-t border-gray-200 dark:border-gray-600">
-                  <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">My Contributions</h3>
+                  <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 !mt-0 mb-2">My Contributions</h3>
                   <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {project.data.contributions}
                   </p>

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:upload.wikimedia.org)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm add:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(npm:*)"
+    ]
+  }
+}
