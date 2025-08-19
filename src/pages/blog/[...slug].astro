@@ -1,17 +1,19 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import { Picture } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro';
+import { Picture } from "astro:assets";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.filter(p => !p.data.draft).map((post) => ({
-    params: { slug: post.data.slug },
-    props: post,
-  }));
+	const posts = await getCollection("blog");
+	return posts
+		.filter((p) => !p.data.draft)
+		.map((post) => ({
+			params: { slug: post.data.slug },
+			props: post,
+		}));
 }
 
-type Props = CollectionEntry<'blog'>;
+type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
 const { Content } = await render(post);

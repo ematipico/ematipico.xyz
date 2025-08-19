@@ -1,11 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
-import { Picture } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro';
+import { Picture } from "astro:assets";
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
 
-
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.filter(p => !p.data.draft).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPosts = await getCollection("blog");
+const sortedPosts = allPosts
+	.filter((p) => !p.data.draft)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <Layout title="Blog - Emanuele Stoppa" description="Articles about web development, software engineering, and technology." ogImage="/og/blog.png">

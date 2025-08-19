@@ -1,9 +1,11 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
-const allProjects = await getCollection('projects');
-const sortedProjects = allProjects.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
+const allProjects = await getCollection("projects");
+const sortedProjects = allProjects.sort(
+	(a, b) => (a.data.order || 999) - (b.data.order || 999),
+);
 ---
 
 <Layout title="Projects - Emanuele Stoppa" description="Open source projects I've contributed to" ogImage="/og/projects.png">

@@ -1,8 +1,8 @@
 {
-  "name": "Astro",
-  "description": "The web framework for content-driven websites",
-  "githubUrl": "https://github.com/withastro/astro",
-  "iconUrl": "https://github.com/withastro.png",
-  "contributions": "I am currenlty part of the Core Team. I contributed to the project by implementing the middleware feature, and the edge middleware system for some the official adapters. New build system, i18n and CSP.",
-  "order": 2
+	"name": "Astro",
+	"description": "The web framework for content-driven websites",
+	"githubUrl": "https://github.com/withastro/astro",
+	"iconUrl": "https://github.com/withastro.png",
+	"contributions": "I am currenlty part of the Core Team. I contributed to the project by implementing the middleware feature, and the edge middleware system for some the official adapters. New build system, i18n and CSP.",
+	"order": 2
 }

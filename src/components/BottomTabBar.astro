@@ -1,14 +1,14 @@
 ---
 export interface Props {
-  currentPath?: string;
+	currentPath?: string;
 }
 
-const { currentPath = '' } = Astro.props;
+const { currentPath = "" } = Astro.props;
 
 const isActive = (path: string) => {
-  if (path === '/' && currentPath === '/') return true;
-  if (path !== '/' && currentPath.startsWith(path)) return true;
-  return false;
+	if (path === "/" && currentPath === "/") return true;
+	if (path !== "/" && currentPath.startsWith(path)) return true;
+	return false;
 };
 ---
 

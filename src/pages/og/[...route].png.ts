@@ -1,51 +1,52 @@
-import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
-import { satoriAstroOG } from 'satori-astro';
-import { html } from 'satori-html';
+import { getCollection } from "astro:content";
+import type { APIRoute } from "astro";
+import { satoriAstroOG } from "satori-astro";
+import { html } from "satori-html";
 
 export const GET: APIRoute = async ({ params }) => {
-  const route = params.route;
-  
-  if (!route) {
-    return new Response('Route parameter missing', { status: 400 });
-  }
+	const route = params.route;
 
-  let title = 'Emanuele Stoppa';
-  let subtitle = "Software Engineer";
-  let description = "Personal website and blog";
+	if (!route) {
+		return new Response("Route parameter missing", { status: 400 });
+	}
 
-  if (route === 'home') {
-    title = 'Emanuele Stoppa';
-    subtitle = 'Software Engineer';
-    description = 'Personal website and blog about software development';
-  } else if (route === 'blog') {
-    title = 'Blog';
-    subtitle = 'Emanuele Stoppa';
-    description = 'Articles about software development, web technologies, and more';
-  } else if (route === 'projects') {
-    title = 'Projects';
-    subtitle = 'Emanuele Stoppa';
-    description = 'Open source projects and contributions';
-  } else if (route.startsWith('blog/')) {
-    const slug = route.replace('blog/', '');
-    const posts = await getCollection('blog');
-    const post = posts.find(p => p.slug === slug);
-    
-    if (post) {
-      title = post.data.title;
-      subtitle = 'ematipico.xyz';
-      description = post.data.description;
-    }
-  }
+	let title = "Emanuele Stoppa";
+	let subtitle = "Software Engineer";
+	let description = "Personal website and blog";
 
-  // Fetch font data
-  const fontFile = await fetch(
-    "https://og-playground.vercel.app/inter-latin-ext-700-normal.woff"
-  );
-  const fontData: ArrayBuffer = await fontFile.arrayBuffer();
+	if (route === "home") {
+		title = "Emanuele Stoppa";
+		subtitle = "Software Engineer";
+		description = "Personal website and blog about software development";
+	} else if (route === "blog") {
+		title = "Blog";
+		subtitle = "Emanuele Stoppa";
+		description =
+			"Articles about software development, web technologies, and more";
+	} else if (route === "projects") {
+		title = "Projects";
+		subtitle = "Emanuele Stoppa";
+		description = "Open source projects and contributions";
+	} else if (route.startsWith("blog/")) {
+		const slug = route.replace("blog/", "");
+		const posts = await getCollection("blog");
+		const post = posts.find((p) => p.data.slug === slug);
 
-  return await satoriAstroOG({
-    template: html`
+		if (post) {
+			title = post.data.title;
+			subtitle = "ematipico.xyz";
+			description = post.data.description;
+		}
+	}
+
+	// Fetch font data
+	const fontFile = await fetch(
+		"https://og-playground.vercel.app/inter-latin-ext-700-normal.woff",
+	);
+	const fontData: ArrayBuffer = await fontFile.arrayBuffer();
+
+	return await satoriAstroOG({
+		template: html`
       <div style="
         width: 100%;
         height: 100%;
@@ -114,29 +115,29 @@ export const GET: APIRoute = async ({ params }) => {
         </div>
       </div>
     `,
-    width: 1200,
-    height: 630,
-  }).toResponse({
-    satori: {
-      fonts: [
-        {
-          name: "Inter Latin",
-          data: fontData,
-          style: "normal",
-        },
-      ],
-    },
-  });
+		width: 1200,
+		height: 630,
+	}).toResponse({
+		satori: {
+			fonts: [
+				{
+					name: "Inter Latin",
+					data: fontData,
+					style: "normal",
+				},
+			],
+		},
+	});
 };
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  const paths = [
-    { params: { route: 'home' } },
-    { params: { route: 'blog' } },
-    { params: { route: 'projects' } },
-    ...posts.map(post => ({ params: { route: `blog/${post.slug}` } }))
-  ];
+	const posts = await getCollection("blog");
+	const paths = [
+		{ params: { route: "home" } },
+		{ params: { route: "blog" } },
+		{ params: { route: "projects" } },
+		...posts.map((post) => ({ params: { route: `blog/${post.data.slug}` } })),
+	];
 
-  return paths;
+	return paths;
 }

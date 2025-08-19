@@ -1,8 +1,8 @@
 {
-  "name": "Rome",
-  "description": "A toolchain for web projects, aimed to provide functionality of many separate tools",
-  "githubUrl": "https://github.com/rome/tools",
-  "iconUrl": "https://github.com/rome.png",
-  "contributions": "",
-  "order": 5
+	"name": "Rome",
+	"description": "A toolchain for web projects, aimed to provide functionality of many separate tools",
+	"githubUrl": "https://github.com/rome/tools",
+	"iconUrl": "https://github.com/rome.png",
+	"contributions": "",
+	"order": 5
 }

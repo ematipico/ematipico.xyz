@@ -1,8 +1,0 @@
-{
-  "name": "Biome",
-  "description": "A toolchain for web projects, aimed to provide functionality of many separate tools. Successor to Rome",
-  "githubUrl": "https://github.com/biomejs/biome",
-  "iconUrl": "https://github.com/biomejs.png",
-  "contributions": "I am the creator and lead of the proejct. I contributed to different parts of the projects, such as the CLI, the LSP, many lint rules, and the formatter.",
-  "order": 1
-}

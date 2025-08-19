@@ -1,8 +1,8 @@
 {
-  "name": "Webpack",
-  "description": "A static module bundler for modern JavaScript applications",
-  "githubUrl": "https://github.com/webpack/webpack",
-  "iconUrl": "https://github.com/webpack.png",
-  "contributions": "",
-  "order": 3
+	"name": "Webpack",
+	"description": "A static module bundler for modern JavaScript applications",
+	"githubUrl": "https://github.com/webpack/webpack",
+	"iconUrl": "https://github.com/webpack.png",
+	"contributions": "",
+	"order": 3
 }
