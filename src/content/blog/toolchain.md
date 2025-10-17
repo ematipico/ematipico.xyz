@@ -223,7 +223,7 @@ You see where I am going with this? Yes, **the formatter is the most difficult p
 
 [Bob Nystrom](https://bsky.app/profile/stuffwithstuff.com), writer of [Crafting Interpreters](https://craftinginterpreters.com/) [wrote about it when he wrote the Dart formatter](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/). Prettier creator, Christopher Chedeau, has recently created a blog post about the birth of Prettier, and talked about the [the challenges faced](https://blog.vjeux.com/2025/javascript/birth-of-prettier.html#:~:text=Printing%20Difficulties). 
 
-As co-creator of the Biome formatter, I can confirm that. My personal advice, if you ever want to write a formatter, is to use the Prettier + Biome architecture, which I believe works best for the majority of cases (wait for a blog post!). In fact, [Ruff](https://docs.astral.sh/ruff/) and [oxcfmt](https://oxc.rs/) use a fork of the Biome formatting infrastructure.
+As co-creator of the Biome formatter, I can confirm that. My personal advice, if you ever want to write a formatter, is to use the Prettier + Biome architecture, which I believe works best for the majority of cases (wait for a blog post!). In fact, [Ruff](https://docs.astral.sh/ruff/) and [oxfmt](https://oxc.rs/) use a fork of the Biome formatting infrastructure.
 
 ## Takeaways 
 
