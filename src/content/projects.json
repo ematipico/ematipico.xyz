@@ -1,0 +1,51 @@
+[
+	{
+		"id": "biome",
+		"name": "Biome",
+		"description": "A toolchain for web projects, aimed to provide functionality of many separate tools. Successor to Rome",
+		"githubUrl": "https://github.com/biomejs/biome",
+		"website": "https://biomejs.dev",
+		"iconUrl": "https://github.com/biomejs.png",
+		"contributions": "I am the creator and lead of the project. I contributed to different parts of the projects, such as the CLI, the LSP, many lint rules, and the formatter.",
+		"order": 1
+	},
+	{
+		"id": "astro",
+		"name": "Astro",
+		"description": "The web framework for content-driven websites",
+		"githubUrl": "https://github.com/withastro/astro",
+		"website": "https://astro.build",
+		"iconUrl": "https://github.com/withastro.png",
+		"contributions": "I am currently part of the Core Team. I contributed to the project by implementing the middleware feature, and the edge middleware system for some the official adapters. New build system, i18n and CSP.",
+		"order": 2
+	},
+	{
+		"id": "webpack",
+		"name": "Webpack",
+		"description": "A static module bundler for modern JavaScript applications",
+		"githubUrl": "https://github.com/webpack/webpack",
+		"website": "https://webpack.js.org",
+		"iconUrl": "https://github.com/webpack.png",
+		"contributions": "",
+		"order": 3
+	},
+	{
+		"id": "standard",
+		"name": "Standard",
+		"description": "JavaScript Standard Style - One style to rule them all",
+		"githubUrl": "https://github.com/standard/standard",
+		"website": "https://standardjs.com",
+		"iconUrl": "https://github.com/standard.png",
+		"contributions": "",
+		"order": 4
+	},
+	{
+		"id": "rome",
+		"name": "Rome",
+		"description": "A toolchain for web projects, aimed to provide functionality of many separate tools",
+		"githubUrl": "https://github.com/rome/tools",
+		"iconUrl": "https://github.com/rome.png",
+		"contributions": "",
+		"order": 5
+	}
+]

@@ -369,3 +369,9 @@ a:hover code:not(pre code) {
 	max-width: 100% !important;
 	height: auto !important;
 }
+
+.anchor-link {
+    display: inline-block;
+    margin-left: 0.5rem;
+    transition: opacity 0.2s ease;
+}

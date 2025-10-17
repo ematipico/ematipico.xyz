@@ -13,6 +13,8 @@
 	"dependencies": {
 		"@astrojs/mdx": "0.3.0",
 		"astro": "^5.12.9",
+		"rehype-autolink-headings": "^7.1.0",
+		"rehype-slug": "^6.0.0",
 		"satori": "^0.16.2",
 		"satori-astro": "^0.3.0",
 		"satori-html": "^0.3.2",

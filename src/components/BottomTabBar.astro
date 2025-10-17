@@ -16,11 +16,11 @@ const isActive = (path: string) => {
 <nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 z-50 sm:hidden">
   <div class="flex justify-around items-center py-2">
     <!-- Home -->
-    <a 
-      href="/" 
+    <a
+      href="/"
       class={`flex flex-col items-center px-3 py-2 transition-colors ${
-        isActive('/') 
-          ? 'text-blue-600 dark:text-blue-400' 
+        isActive('/')
+          ? 'text-blue-600 dark:text-blue-400'
           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
       }`}
     >
@@ -30,12 +30,27 @@ const isActive = (path: string) => {
       <span class="text-xs mt-1">Home</span>
     </a>
 
-    <!-- Projects -->
-    <a 
-      href="/projects" 
+    <!-- About -->
+    <a
+      href="/about"
       class={`flex flex-col items-center px-3 py-2 transition-colors ${
-        isActive('/projects') 
-          ? 'text-blue-600 dark:text-blue-400' 
+        isActive('/about')
+          ? 'text-blue-600 dark:text-blue-400'
+          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+      }`}
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+      <span class="text-xs mt-1">About</span>
+    </a>
+
+    <!-- Projects -->
+    <a
+      href="/projects"
+      class={`flex flex-col items-center px-3 py-2 transition-colors ${
+        isActive('/projects')
+          ? 'text-blue-600 dark:text-blue-400'
           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
       }`}
     >
@@ -46,11 +61,11 @@ const isActive = (path: string) => {
     </a>
 
     <!-- Blog -->
-    <a 
-      href="/blog" 
+    <a
+      href="/blog"
       class={`flex flex-col items-center px-3 py-2 transition-colors ${
-        isActive('/blog') 
-          ? 'text-blue-600 dark:text-blue-400' 
+        isActive('/blog')
+          ? 'text-blue-600 dark:text-blue-400'
           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
       }`}
     >
