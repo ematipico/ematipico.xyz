@@ -1,7 +1,8 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
-import { satoriAstroOG } from "satori-astro";
+import satori from "satori";
 import { html } from "satori-html";
+import sharp from "sharp";
 
 export const GET: APIRoute = async ({ params }) => {
 	const route = params.route;
@@ -45,8 +46,7 @@ export const GET: APIRoute = async ({ params }) => {
 	);
 	const fontData: ArrayBuffer = await fontFile.arrayBuffer();
 
-	return await satoriAstroOG({
-		template: html`
+	const template = html`
       <div style="
         width: 100%;
         height: 100%;
@@ -114,19 +114,22 @@ export const GET: APIRoute = async ({ params }) => {
           </div>
         </div>
       </div>
-    `,
+	`;
+	const svg = await satori(template as Parameters<typeof satori>[0], {
 		width: 1200,
 		height: 630,
-	}).toResponse({
-		satori: {
-			fonts: [
-				{
-					name: "Inter Latin",
-					data: fontData,
-					style: "normal",
-				},
-			],
-		},
+		fonts: [
+			{
+				name: "Inter Latin",
+				data: fontData,
+				style: "normal",
+			},
+		],
+	});
+	const png = await sharp(Buffer.from(svg)).png().toBuffer();
+
+	return new Response(new Uint8Array(png), {
+		headers: { "Content-Type": "image/png" },
 	});
 };
 

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Tailwind v4 Dark Mode Configuration */
-@variant dark (.dark &);
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Screen reader only utility */
 .sr-only {
@@ -173,67 +173,8 @@ a:focus {
 a.text-white,
 a.text-white:hover,
 a.text-white:focus {
-	color: white !important;
-	text-decoration: none !important;
-}
-
-.prose h1 {
-	font-size: 1.875rem;
-	font-weight: 700;
-	color: rgb(17 24 39);
-	margin-top: 2rem;
-	margin-bottom: 1rem;
-}
-
-.dark .prose h1 {
-	color: rgb(249 250 251);
-}
-
-.prose h2 {
-	font-size: 1.5rem;
-	font-weight: 600;
-	color: rgb(17 24 39);
-	margin-top: 1.5rem;
-	margin-bottom: 0.75rem;
-}
-
-.dark .prose h2 {
-	color: rgb(249 250 251);
-}
-
-.prose h3 {
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: rgb(17 24 39);
-	margin-top: 1.25rem;
-	margin-bottom: 0.5rem;
-}
-
-.dark .prose h3 {
-	color: rgb(249 250 251);
-}
-
-.prose p {
-	margin-bottom: 1rem;
-}
-
-.prose a {
-	color: rgb(88 28 135);
-	transition-property: color;
-	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-	transition-duration: 150ms;
-}
-
-.prose a:hover {
-	color: rgb(107 33 168);
-}
-
-.dark .prose a {
-	color: rgb(240 171 252);
-}
-
-.dark .prose a:hover {
-	color: rgb(250 208 255);
+	color: white;
+	text-decoration: none;
 }
 
 /* Inline code styling (not in pre blocks) */
@@ -264,58 +205,26 @@ code:not(pre code) {
 a code:not(pre code),
 a:link code:not(pre code),
 a:visited code:not(pre code) {
-	color: rgb(88 28 135) !important;
-	font-size: inherit !important;
+	color: rgb(88 28 135);
+	font-size: inherit;
 }
 
 a:hover code:not(pre code) {
-	color: rgb(107 33 168) !important;
+	color: rgb(107 33 168);
 }
 
 .dark a code:not(pre code),
 .dark a:link code:not(pre code),
 .dark a:visited code:not(pre code) {
-	color: rgb(240 171 252) !important;
+	color: rgb(240 171 252);
 }
 
 .dark a:hover code:not(pre code) {
-	color: rgb(250 208 255) !important;
+	color: rgb(250 208 255);
 }
 
-/* Prose inline code styling */
-.prose code:not(pre code) {
-	background-color: rgb(243 244 246);
-	color: rgb(17 24 39);
-	padding: 0.125rem 0.25rem;
-	border-radius: 0.25rem;
-	font-size: 0.875rem;
-	font-family:
-		ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
-		monospace;
-}
-
-.dark .prose code:not(pre code) {
-	background-color: rgb(55 65 81);
-	color: rgb(243 244 246);
-}
-
-.prose a code:not(pre code) {
-	color: rgb(88 28 135) !important;
-}
-
-.prose a:hover code:not(pre code) {
-	color: rgb(107 33 168) !important;
-}
-
-.dark .prose a code:not(pre code) {
-	color: rgb(240 171 252) !important;
-}
-
-.dark .prose a:hover code:not(pre code) {
-	color: rgb(250 208 255) !important;
-}
-
-.prose pre {
+/* Pre/code blocks */
+pre {
 	background-color: rgb(17 24 39);
 	color: rgb(243 244 246);
 	padding: 1rem;
@@ -324,54 +233,48 @@ a:hover code:not(pre code) {
 	margin: 1.5rem 0;
 }
 
-.dark .prose pre {
+.dark pre {
 	background-color: rgb(31 41 55);
 	color: rgb(229 231 235);
 }
 
-.prose blockquote {
+/* Blockquote styling */
+blockquote {
 	border-left: 4px solid rgb(59 130 246);
 	padding-left: 1rem;
 	font-style: italic;
 	color: rgb(75 85 99);
 }
 
-.dark .prose blockquote {
+.dark blockquote {
 	border-left-color: rgb(96 165 250);
 	color: rgb(156 163 175);
 }
 
-.prose ul,
-.prose ol {
-	margin-bottom: 1rem;
-	margin-left: 1.5rem;
-}
-
-.prose li {
-	margin-bottom: 0.5rem;
-}
-
-.prose img {
+/* Image styling for blog content only */
+article img:not([class*="object-cover"]):not([class*="w-full"]) {
 	border-radius: 0.5rem;
 	box-shadow:
 		0 4px 6px -1px rgb(0 0 0 / 0.1),
 		0 2px 4px -2px rgb(0 0 0 / 0.1);
+	display: block;
+	margin: 2rem auto;
+	max-width: 100%;
+	height: auto;
 }
 
-.dark .prose img {
+.dark article img:not([class*="object-cover"]):not([class*="w-full"]) {
 	box-shadow:
 		0 4px 6px -1px rgb(0 0 0 / 0.3),
 		0 2px 4px -2px rgb(0 0 0 / 0.2);
 }
-.prose img {
-	display: block !important;
-	margin: 2rem auto !important;
-	max-width: 100% !important;
-	height: auto !important;
-}
 
 .anchor-link {
-    display: inline-block;
-    margin-left: 0.5rem;
-    transition: opacity 0.2s ease;
+	display: inline-block;
+	margin-left: 0.5rem;
+	transition: opacity 0.2s ease;
+}
+
+.expressive-code {
+	margin-bottom: 1.25rem;
 }

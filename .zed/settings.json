@@ -1,0 +1,25 @@
+{
+	"lsp": {
+		"harper-ls": {
+			"settings": {
+				"harper-ls": {
+					// Use a specific English dialect
+					"dialect": "British",
+					"linters": {
+						"SpellCheck": true,
+						"SpelledNumbers": false,
+						"AnA": true,
+						"SentenceCapitalization": true,
+						"UnclosedQuotes": true,
+						"WrongQuotes": false,
+						"LongSentences": true,
+						"RepeatedWords": true,
+						"Spaces": true,
+						"Matcher": true,
+						"CorrectNumberSuffix": true
+					}
+				}
+			}
+		}
+	}
+}
