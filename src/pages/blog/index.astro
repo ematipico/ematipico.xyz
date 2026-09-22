@@ -9,23 +9,32 @@ const sortedPosts = allPosts
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<Layout title="Blog - Emanuele Stoppa" description="Articles about web development, software engineering, and technology." ogImage="/og/blog.png">
-  <div class="space-y-8">
-    <div class="text-center space-y-4">
-      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Blog</h1>
-      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        I post something, rarely. Thoughts, ideas, and opinions about web development, software engineering, and technology.
-      </p>
-    </div>
+<Layout
+	title="Blog - Emanuele Stoppa"
+	description="Articles about web development, software engineering, and technology."
+	ogImage="/og/blog.png"
+>
+	<div class="space-y-8">
+		<div class="text-center space-y-4">
+			<h1
+				class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100"
+			>
+				Blog
+			</h1>
+			<p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+				I post something, rarely. Thoughts, ideas, and opinions about web
+				development, software engineering, and technology.
+			</p>
+		</div>
 
-    {sortedPosts.length > 0 ? (
+		{sortedPosts.length > 0 ? (
       <div class="grid gap-8">
         {sortedPosts.map((post) => (
           <article class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-            {post.data.heroImage && (
+            {post.data.hero.image && (
               <Picture
-                src={post.data.heroImage}
-                alt={post.data.heroAltImage || post.data.title}
+                src={post.data.hero.image}
+                alt={post.data.hero.alt || post.data.title}
                 width={600}
                 height={192}
                 class="w-full h-48 object-cover"
@@ -68,5 +77,5 @@ const sortedPosts = allPosts
         </p>
       </div>
     )}
-  </div>
+	</div>
 </Layout>

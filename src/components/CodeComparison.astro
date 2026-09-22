@@ -1,0 +1,76 @@
+---
+import { renderExpressiveCode } from "../lib/expressiveCode";
+
+interface Stage {
+	label: string;
+	code: string;
+}
+
+interface Props {
+	stages: Stage[];
+	lang?: string;
+}
+
+const { stages, lang = "text" } = Astro.props;
+
+if (stages.length < 2) {
+	throw new Error("CodeComparison requires at least two stages.");
+}
+
+const renderedStages = await Promise.all(
+	stages.map(async (stage) => ({
+		...stage,
+		html: await renderExpressiveCode(stage.code, lang),
+	})),
+);
+---
+
+{renderedStages.slice(0, -1).map((stage, index) => {
+	const nextStage = renderedStages[index + 1];
+	return (
+		<section
+			aria-label={`${stage.label} to ${nextStage.label} code comparison`}
+			class="-mx-4 my-6 overflow-x-auto overflow-y-hidden px-4 pb-2 sm:mx-0 sm:px-0"
+			tabindex="0"
+		>
+			<div class="grid min-w-[48rem] grid-cols-[minmax(0,1fr)_2rem_minmax(0,1fr)] items-stretch gap-4 lg:min-w-0">
+				<div class="flex min-w-0 flex-col">
+					<div class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+						{stage.label}
+					</div>
+					<div class="code-panel min-w-0 flex-1">
+						<Fragment set:html={stage.html} />
+					</div>
+				</div>
+
+				<div
+					class="flex items-center justify-center text-2xl"
+					aria-hidden="true"
+				>
+					&rarr;
+				</div>
+
+				<div class="flex min-w-0 flex-col">
+					<div class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+						{nextStage.label}
+					</div>
+					<div class="code-panel min-w-0 flex-1">
+						<Fragment set:html={nextStage.html} />
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+})}
+
+<style>
+.code-panel :global(.expressive-code),
+.code-panel :global(.expressive-code figure),
+.code-panel :global(.expressive-code pre) {
+	height: 100%;
+}
+
+.code-panel :global(.expressive-code) {
+	margin-bottom: 0;
+}
+</style>

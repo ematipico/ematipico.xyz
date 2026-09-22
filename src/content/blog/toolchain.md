@@ -2,8 +2,9 @@
 title: Toolchains, the hard parts
 description: Let's dive inside the hard parts of building a toolchain
 pubDate: 2025-10-10
-heroImage: /src/content/assets/blog/chain.jpg
-heroAltImage: A chain
+hero:
+  image: /src/content/assets/blog/chain.jpg
+  alt: A chain
 slug: toolchains-the-hard-parts
 ---
 

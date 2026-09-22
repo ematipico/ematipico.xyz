@@ -1,0 +1,382 @@
+---
+title: The Best Formatter - Part 1
+description: |
+  An opinionated vision of what a Formatter should look like in 2026, navigating some aspects of the infrastructure: the right data, debugging, and comments.
+pubDate: 2026-09-22
+hero:
+  image: /src/content/assets/blog/penci_paper.jpg
+  alt: A pen and a paper
+  credit: |
+    Photo by <a href="https://unsplash.com/@aaronburden?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Aaron Burden</a> on <a href="https://unsplash.com/photos/fountain-pen-on-spiral-book-xG8IQMqMITM?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+slug: the-best-formatter
+---
+import CodeComparison from "../../components/CodeComparison.astro";
+
+Formatters are everywhere nowadays, and if you intend to ship your own language, you must have a formatter. That's just what the majority of the users want these days.
+
+Formatters are way younger than linters and compilers; hence, we have fewer resources available on **how** to create a formatter from scratch. I mean, there are resources in terms of source (Prettier, Black, Ruff, rustfmt, gofmt, etc.), but in terms of books and such, there's less available to us.
+
+In this blog post, I want to talk about **my** ideal architecture of a formatter based on my past experience as a user and as a developer.
+
+## Preface
+
+If you don't know, I am one of the maintainers of [Biome](https://biomejs.dev) and [Astro](https://astro.build), and in the past, I got to write the Biome formatter in Rust when I was employed by Rome Tools. During development, our aim was to keep the same formatting style as Prettier. 
+
+This experience allowed me to understand that writing a formatter isn't an easy feat, and it presents many challenges. Prettier is an excellent piece of software, and while it might have some quirks, the foundations behind it are very solid. I also experienced what it's like to write a formatter in a very rigid language such as Rust.
+
+In the following paragraphs, I will talk about Prettier, because that's where much of my knowledge is built from; however, I will try to do my best and mention how other formatters out there work.
+
+The Biome formatter was designed with [Micha Reiser](https://github.com/MichaReiser), currently employed at [Astral](https://astral.sh), whom I worked with at Rome Tools a few years ago. Micha designed a great part of the formatter, while keeping some other foundations in place, which I will talk about later.
+
+With everything combined, I am going to present a very technical presentation of how a formatter should be. There might be some concepts that you might not be familiar with. This overview is biased; it's my opinion, and it's totally fine if you don't agree with it.  
+
+## The Right Data
+
+The Best Formatter should use the right data for the job. Plain and simple. The vast majority of the formatters out there use the wrong data for the job.
+
+### Use a CST Instead
+
+The acronym CST stands for Concrete Syntax Tree. You probably haven't heard about it, and that's fine. I didn't know what it was before working at Rome Tools. A CST, contrary to the AST (Abstract Syntax Tree), is a representation of the code where all the information is stored in the tree.
+
+Yes, the AST doesn't save all the information about code. I will share a small piece of JavaScript and show how [acorn](https://github.com/acornjs/acorn) represents it in its AST and how Biome represents it in its CST. Some parts of the AST/CST are cut off for the sake of length, and only show what's really important for the sake of the argument.
+
+The Code:
+```js
+// comment
+let foo;
+```
+
+The AST:
+```json
+{
+  "type": "VariableDeclaration",
+  "start": 11,
+  "end": 19,
+  "declarations": [
+    {
+      "type": "VariableDeclarator",
+      "start": 15,
+      "end": 18,
+      "id": {
+        "type": "Identifier",
+        "start": 15,
+        "end": 18,
+        "name": "foo"
+      },
+      "init": null
+    }
+  ],
+  "kind": "let"
+}
+```
+
+The CST:
+```txt ins='Newline("\n")' ins='Whitespace(" ")' ins='SEMICOLON@18..19 ";"'
+JsVariableStatement {
+  declaration: JsVariableDeclaration {
+    await_token: missing (optional),
+    kind: LET_KW@0..15 "let" [Comments("// comment"), Newline("\n")] [Whitespace(" ")],
+    declarators: JsVariableDeclaratorList [
+      JsVariableDeclarator {
+        id: JsIdentifierBinding {
+          name_token: IDENT@15..18 "foo" [] [],
+        },
+        variable_annotation: missing (optional),
+        initializer: missing (optional),
+      },
+    ],
+  },
+  semicolon_token: SEMICOLON@18..19 ";" [] [],
+}
+```
+
+Acorn AST doesn't save comments during parsing. It also doesn't save the semicolon `;`.
+
+Somehow, with the AST, we **lost information** along the way: information that might not be useful for certain operations but is important for others. 
+
+But here's the kicker: the majority of parsers out there are meant for analysis and such, so it's completely fine to lose some information along the way. Then the formatter comes in, and only AST parsers are available. Nobody is going to rewrite a parser and emit a CST only for the sake of "saving information".
+
+It's important to mention that there are different parsers out there, each with their own data structure. The Babel parser, for example, saves comments. Some save columns and lines. I couldn't find one that tracks the information about the semicolon.
+
+The CST, on the other hand, saved that information, which I highlighted in the code snippet. Additionally, it also saved information such as whitespace and newlines, as highlighted in the previous code block. 
+
+The formatter needs to have access to all the information possible to print the right code, and the case of the semicolon `;` is perfect. If the semicolon is missing, and the language requires it, the formatter will have to create a new one; hence, it must store a new string in memory. However, the CST saved that semicolon for us already, so we just need to **borrow** it and save memory. This is true for all the keywords and words, which means the formatter rarely creates new strings, and instead it borrows them from the CST.
+
+### Don't Use Strings
+
+If there's something that Prettier, Gleam, Biome, Ruff, oxfmt, etc. got right, it is the use of an [IR](https://en.wikipedia.org/wiki/Intermediate_representation) (Intermediate Representation) to signal how a document should be formatted.
+
+The benefit of having an IR is simple: it abstracts from the original source (AST) by returning a data structure that is known to another entity, here called *Printer*. And that's why Prettier is able to support so many languages, by also maintaining consistent formatting across the board.
+
+On the other hand, other formatters such as gofmt and rustfmt use plain strings to format the code. This implementation might be slightly faster because they don't use a Printer; however, it becomes hard to have consistent formatting across multiple situations.
+
+Here's what a (simplified) IR might look like, given a simple piece of JavaScript code:
+
+Source Code:
+```js
+function name(foo) {
+  return "bar"
+}
+```
+
+Possible IR:
+```txt
+[
+  Text("function"),
+  Space,
+  Text("name("),
+  Group([
+    "foo"
+  ]),
+  Text(")"),
+  Space,
+  Text("{"),
+  Indent(Group([
+    Text("return"),
+    Space,
+    Text("\"bar\"")
+  ])),
+  Text("}"),
+  LineBreak
+]
+```
+
+The Printer knows how to interpret this structure and emits consistent formatting. Additionally, a data structure like this becomes very useful when debugging cases of [Idempotence](#idempotence).
+
+## Ownership
+
+At this point, we know what a CST is and what an IR is. You create an IR by inspecting:
+- User options
+- The current code (shape of the syntax tree)
+- The current trivia (comments, most of the time)
+
+How you do it varies based on various factors and how you decide to architect your solution:
+- The language you're formatting and its concepts
+- The language you're using to write the formatter 
+- Your preferences and tastes in programming paradigms (Object-Oriented, functional, Arenas, etc.)
+
+For example, Prettier decided to implement the creation of the IR with the use of language "concepts". For example, in JavaScript there's the concept of "Member Chain", which is a member that calls a series of functions:
+
+```js
+formData
+  .validate()
+  .transform()
+  .compute()
+````
+
+So there's a file or an entity that inspects the syntax tree that matches this concept, and then it creates the appropriate IR, so it's consistent across the board.
+
+While this works *for particular cases*, I believe this doesn't scale because you might end up with a lot of "concepts" intertwined in the same document.
+
+In Biome, instead, I implemented the foundations of the formatter with this concept in mind: **each syntax node knows how to format itself**. This is the core of the formatter. Here's what the implementation looks like in Rust:
+
+```rs
+impl Format<Context> for JsVariableDeclarator {
+    fn format(&self, fmt: &mut Formatter) -> FormatResult {
+        // push IR fields using fmt
+    }
+}
+```
+
+If you go back to the CST shown before, in `JsVariableDeclarator` we have access to `id`, `variable_annotation` and `initializer`. We're working with a syntax tree, so we can navigate the syntax tree and emit the proper IR based on the surrounding nodes.
+
+Then, you just need to call the `.format(fmt)` function, and the generated IR is stored inside the `Formatter` type.
+
+The code I shared isn't exactly what Biome's code looks like, but it's very similar. If you wanted to have a similar implementation in TypeScript, I suppose you would want an abstract interface, and then declare the implementation:
+
+```ts
+abstract interface Format<N> {
+  format(node: N, fmt: Formatter)
+}
+
+class FormatVariableDeclarator extends Format<VariableDeclarator> {
+  format(node, fmt) {
+    // generation of the IR goes here, and node is typed
+  }
+}
+```
+
+While this kind of ownership is good for the majority of cases, unfortunately there are cases where the "concept" implementation works better. The node-ownership architecture serves as a foundation; then you build from it based on what your requirements need. This also allows for a great debugging experience, something that many formatters out there lack.
+
+## Debugging
+
+I believe Biome's formatter debugging capabilities are great and possibly unmatched. 
+
+While I am biased *and probably wrong*, you can create a great harness only when you combine CST, IR and node ownership formatting all together. Even `oxfmt` and `ruff`, which use a fork of the `biome_formatter` crate, can't offer the same because they use an AST instead.
+
+Below, I will explain the debugging capabilities that these concepts unlock, and how we use them in our testing harness.
+
+### Data Tracking
+
+We designed the formatter with reuse and borrowing in mind, meaning that the formatter must use everything that is saved in the CST.
+
+Biome's CST has three concepts:
+- Node. It is an object that contains a known data structure.
+- Token. It holds the actual data of the code. A keyword such as `return`, a number, or a literal string such as `"Lorem ipsum"`.
+- Trivia. Comments, spaces, and newlines. They are attached to tokens. Trivia can be leading, appearing on the "left" of a token, or trailing, appearing on the "right" of a token. The previous CST block shows some of them.
+
+The ownership model allows Biome to have debugging functions - or "hooks" - that are called upon formatting a node or a token. If a node or token hasn't been seen, the testing infrastructure emits an error. 
+
+This unlocks the following:
+- Print all the tokens inside a syntax tree. Maximum reuse, less waste of memory.
+- Tokens that need to be removed or substituted require intent. I love doing things with intent when writing code, because there's less magic and the code speaks for itself. For example, you want to remove a semicolon `;` when not needed, or substitute a string literal with double quotes with one with single quotes.
+- Allows opting in to the "concept" formatting with intent, and marking some nodes as "formatted".
+
+With an AST, the most you can achieve is the tracking of nodes; however, you can't track every single token.
+
+### Idempotence
+
+In a formatter, idempotence is asserted by formatting a certain input, taking the emitted result and formatting it again. If the two outputs are different, it means that the formatter isn't idempotent. 
+
+Here's an example:
+
+<CodeComparison
+	lang="js"
+	stages={[
+		{
+			label: "Input",
+			code: `let 
+ /* comment */
+ a = "bar"`,
+		},
+		{
+			label: "First format pass",
+			code: `let /* comment */ a = "bar"`,
+		},
+		{
+			label: "Second format pass",
+			code: `/* comment */ 
+let a = "bar"`,
+		},
+	]}
+/>
+
+For a formatter to be idempotent, it should have formatted the input by emitting the second format pass:
+
+<CodeComparison
+	lang="js"
+	stages={[
+		{
+			label: "Input",
+			code: `let 
+ /* comment */
+ a = "bar"`,
+		},
+		{
+			label: "First format pass",
+			code: `/* comment */ 
+let a = "bar"`,
+		},
+		{
+			label: "Second format pass",
+			code: `/* comment */ 
+let a = "bar"`,
+		},
+	]}
+/>
+
+Checking the resultant string isn't sufficient when working with an IR; you might end up with cases where two different IRs emit the same code. You might be thinking that checking the IR is "more work", and I can agree with you; however, this provides a further level of security for the stability of the formatter.
+
+## Comments
+
+Handling comments in the formatter is maybe the most complicated part of a formatter. Whether you work with a CST or an AST, placing the comments in the right place isn't a piece of cake.
+
+Here, I believe Prettier nailed it.
+
+Comments must belong to a generic node, and they must have a *placement*. The placement is divided into three categories, defined as follows:
+- Leading: comments that precede a node.
+- Trailing: comments that appear after a node.
+- Dangling: comments that aren't found at the start or at the end of a node. Usually they are found *in the middle* of a node. E.g. `let /* comment */ foo`.
+
+The formatter first scans the whole syntax tree for any comments. When a comment is found, the formatter tags it with its placement kind and its position in the code. The interesting part is that during this phase, we can change its *future* placement during the creation of the IR.
+
+For example, there might be cases where we want to mark a trailing comment as a leading comment of another node. In this example, the `/* comment */` has a trailing placement by default on the node that represents `"Mono"`. We can decide to mark the comment as a leading comment of the node that belongs to `font-display`:
+
+```css
+.foo {
+    font-display: "Mono" /* comment */
+    "Arial"
+}
+```
+
+<CodeComparison
+	lang="css"
+	stages={[
+		{
+			label: "Before",
+			code: `.foo {
+    font-display: "Mono" /* comment */
+    "Arial"
+}`,
+		},
+		{
+			label: "After",
+			code: `.foo {
+    /* comment */			
+    font-display: "Mono" "Arial"
+}`,
+		},
+	]}
+/>
+
+This is an example. In reality, the moving of comments is rare, and it happens only in very particular edge cases. 
+
+Each node is tagged with a list of comments and their respective placements. Then, when the real generation of the IR comes into play, we trigger some specialised hooks: `fmt_leading_comments`, `fmt_dangling_comments` and `fmt_trailing_comments`. These functions are part of the ownership architecture we talked about before.
+
+```rs
+impl Format<Context> for JsVariableDeclarator {
+    fn format(&self, fmt: &mut Formatter) -> FormatResult {
+        // push IR fields using fmt
+    }
+    fn fmt_leading_comments(&self, fmt: &mut Formatter) {}
+    fn fmt_dangling_comments(&self, fmt: &mut Formatter) {}
+    fn fmt_trailing_comments(&self, fmt: &mut Formatter) {}
+}
+```
+
+Usually, these functions have a default implementation, because in the vast majority of cases, comments are printed using the tagged placement. There are rare cases where you want to place some comments in a special part of the code, and that's where the ownership model is handy:
+
+```rs
+impl Format<Context> for JsVariableDeclarator {
+    fn format(&self, fmt: &mut Formatter) -> FormatResult {
+        if (fmt.comments.has_dangling_comments(self)) {
+            // print using the general function to print comments, but in a different position
+            print_dangling_comments(&self.syntax(), fmt) // then pass a generic node
+        }
+    }
+    fn fmt_dangling_comments(&self, fmt: &mut Formatter) -> FormatResult {
+        // Do nothing; it's formatted in the format function
+        Ok(())
+    }
+}
+```
+
+### Suppressions
+
+Suppressions, or directives, are special kinds of comments meant to suppress or change the behaviour of a tool inside the code.
+When I say special, I mean that they contain specific words or are formatted in a specific way. For Biome, it is `biome-ignore format: suppress`; for Prettier, it is `prettier-ignore`, and so on.
+
+In our case, these comments are meant to not format certain sections of the code. 
+
+In a formatter, suppressions work differently than they do in other tools such as a linter. In a formatter, a suppression is applied to a node, while in a linter, a suppression is applied to the next line. We won't focus on the latter here, but, to give an example of how the formatter suppression works, the following suppression disables formatting for **the whole function and the code inside it**:
+
+```js
+// biome-ignore format: suppress
+function     name(foo
+
+) {
+  return    "bar"
+}
+```
+
+In the field, you say *verbatim* formatting. How does a formatter know how to print a node verbatim? If you read the previous paragraphs, you might have understood that there's some sort of infrastructure behind the formatter.
+
+It's exactly that infrastructure that does the job, so that the developers are mostly focused on implementing the right formatting of the nodes.
+
+When a comment is deemed a leading comment of a node and matches the structure of a suppression, the infrastructure skips custom formatting and prints it as it is.
+
+As for what "as it is" means, it varies from formatter to formatter. In the case of Biome, it basically means looping through all tokens and trivia and printing them as they are. It's insanely cheap because everything is borrowed. 
+
+## Conclusions
+
+In the next part, I will share more information about some other parts of the formatter: the Printer, embedded formatting, shortcomings of the CST, shortcomings of the "concept" model, and core concepts of the IR.

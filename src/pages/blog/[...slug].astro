@@ -1,6 +1,7 @@
 ---
 import { Picture } from "astro:assets";
 import { type CollectionEntry, getCollection, render } from "astro:content";
+import TableOfContents from "../../components/TableOfContents.astro";
 import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -16,60 +17,102 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tableOfContents = headings
+	.filter(({ depth }) => depth === 2 || depth === 3)
+	.map((heading) => ({
+		...heading,
+		text: heading.text.endsWith("#")
+			? heading.text.slice(0, -1).trimEnd()
+			: heading.text,
+	}));
+const hasTableOfContents = tableOfContents.length > 0;
 ---
 
-<Layout title={post.data.title} description={post.data.description} ogImage={`/og/blog/${post.data.slug}.png`}>
-  <article class="max-w-3xl mx-auto">
+<Layout
+	title={post.data.title}
+	description={post.data.description}
+	ogImage={`/og/blog/${post.data.slug}.png`}
+	wide={hasTableOfContents}
+>
+	<article>
+		<!-- Header -->
+		<header class="mb-8">
+			<div class="mx-auto max-w-3xl space-y-2 text-center">
+				<time
+					class="text-sm text-gray-500 dark:text-gray-400"
+					datetime={post.data.pubDate.toISOString()}
+				>
+					{post.data.pubDate.toLocaleDateString("en-US", {
+	year: "numeric",
+	month: "long",
+	day: "numeric",
+})}
+				</time>
+				<h1
+					class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight"
+				>
+					{post.data.title}
+				</h1>
+				<p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+					{post.data.description}
+				</p>
+			</div>
 
-    <!-- Header -->
-    <header class="mb-8 space-y-4">
-      <div class="text-center space-y-2">
-        <time class="text-sm text-gray-500 dark:text-gray-400" datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </time>
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
-          {post.data.title}
-        </h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          {post.data.description}
-        </p>
-      </div>
+			{post.data.hero && (
+	<figure
+		class:list={[
+			"mx-auto mt-8",
+			hasTableOfContents ? "lg:max-w-[62rem]" : "max-w-3xl",
+		]}
+	>
+		<Picture
+			src={post.data.hero.image}
+			alt={post.data.hero.alt || post.data.title}
+			width={hasTableOfContents ? 992 : 768}
+			height={320}
+			class="w-full h-64 sm:h-80 object-cover rounded-lg shadow-lg"
+			formats={["avif", "webp"]}
+			layout="constrained"
+		/>
+		{post.data.hero.credit && (
+			<figcaption class="mt-2 text-right text-xs text-gray-500 dark:text-gray-400">
+				<Fragment set:html={post.data.hero.credit} />
+			</figcaption>
+		)}
+	</figure>
+)}
+		</header>
 
-      {post.data.heroImage && (
-        <div class="mt-8">
-          <Picture
-            src={post.data.heroImage}
-            alt={post.data.heroAltImage || post.data.title}
-            width={768}
-            height={320}
-            class="w-full h-64 sm:h-80 object-cover rounded-lg shadow-lg"
-            formats={['avif', 'webp']}
-            layout="constrained"
-          />
-        </div>
-      )}
-    </header>
+		<div
+			class:list={[
+	hasTableOfContents
+		? "lg:grid lg:grid-cols-[minmax(0,48rem)_12rem] lg:justify-center lg:gap-8"
+		: "mx-auto max-w-3xl",
+]}
+		>
+			{hasTableOfContents && <TableOfContents headings={tableOfContents} />}
 
-    <!-- Content -->
-    <div class="prose max-w-none">
-      <Content />
-    </div>
+			<div
+				class:list={["min-w-0", hasTableOfContents && "lg:col-start-1 lg:row-start-1"]}
+			>
+				<!-- Content -->
+				<div
+					class="post-content max-w-none [&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24"
+				>
+					<Content />
+				</div>
 
-    <!-- Navigation -->
-    <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-      <a
-        href="/blog"
-        class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-      >
-        ← Back to blog
-      </a>
-    </nav>
-  </article>
+				<!-- Navigation -->
+				<nav class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
+					<a
+						href="/blog"
+						class="inline-flex items-center text-blue-600 transition-colors hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+					>
+						← Back to blog
+					</a>
+				</nav>
+			</div>
+		</div>
+	</article>
 </Layout>
-
-

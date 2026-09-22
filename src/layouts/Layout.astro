@@ -7,136 +7,168 @@ export interface Props {
 	title: string;
 	description?: string;
 	ogImage?: string;
+	wide?: boolean;
 }
 
 const {
 	title,
 	description = "Emanuele Stoppa's personal website and blog",
 	ogImage,
+	wide = false,
 } = Astro.props;
 const currentYear = new Date().getFullYear();
 ---
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="description" content={description}>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+		<meta name="generator" content={Astro.generator}>
+		<title>{title}</title>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="ematipico.xyz" />
-    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website">
+		<meta property="og:url" content={Astro.url}>
+		<meta property="og:title" content={title}>
+		<meta property="og:description" content={description}>
+		<meta property="og:site_name" content="ematipico.xyz">
+		{ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:site" content="@ematipico" />
-    <meta property="twitter:creator" content="@ematipico" />
-    {ogImage && <meta property="twitter:image" content={new URL(ogImage, Astro.site)} />}
-    
-    <!-- Theme initialization script - must run before body -->
-    <script is:inline>
-      (function() {
-        function getStoredTheme() {
-          if (typeof localStorage !== 'undefined') {
-            return localStorage.getItem('theme') || 'auto';
-          }
-          return 'auto';
-        }
-        
-        function getSystemTheme() {
-          if (typeof window !== 'undefined' && window.matchMedia) {
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          }
-          return 'light';
-        }
-        
-        // Apply theme immediately to prevent flash
-        const theme = getStoredTheme();
-        const actualTheme = theme === 'auto' ? getSystemTheme() : theme;
-        
-        if (actualTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      })();
-    </script>
-  </head>
-  <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-mono leading-relaxed transition-colors">
-    <header class="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50">
-      <nav class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <a href="/" class="text-lg font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            ematipico
-          </a>
-          <div class="flex items-center space-x-6">
-            <!-- Desktop Navigation -->
-            <div class="hidden sm:flex items-center space-x-6">
-              <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
-              <a href="/about" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</a>
-              <a href="/projects" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
-              <a href="/blog" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Blog</a>
-            </div>
-            <div class="flex-shrink-0">
-              <ThemeSwitch />
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image">
+		<meta property="twitter:url" content={Astro.url}>
+		<meta property="twitter:title" content={title}>
+		<meta property="twitter:description" content={description}>
+		<meta property="twitter:site" content="@ematipico">
+		<meta property="twitter:creator" content="@ematipico">
+		{ogImage && <meta property="twitter:image" content={new URL(ogImage, Astro.site)} />}
 
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 sm:pb-8">
-      <slot />
-    </main>
+		<!-- Theme initialization script - must run before body -->
+		<script is:inline>
+		(() => {
+			function getStoredTheme() {
+				if (typeof localStorage !== "undefined") {
+					return localStorage.getItem("theme") || "auto";
+				}
+				return "auto";
+			}
 
-    <footer class="mt-16 border-t border-gray-200 dark:border-gray-700">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            © {currentYear} Emanuele Stoppa. All rights reserved.
-          </p>
-          <div class="flex space-x-4">
-            <a 
-              href="https://github.com/ematipico" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-            >
-              GitHub
-            </a>
-            <a 
-              href="https://linkedin.com/in/emanuelestoppa" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-            >
-              LinkedIn
-            </a>
-            <a 
-              href="https://bsky.app/profile/ematipico.xyz" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-            >
-              Bluesky
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-    
-    <!-- Bottom Tab Bar for Mobile -->
-    <BottomTabBar currentPath={Astro.url.pathname} />
-  </body>
+			function getSystemTheme() {
+				if (typeof window !== "undefined" && window.matchMedia) {
+					return window.matchMedia("(prefers-color-scheme: dark)").matches
+						? "dark"
+						: "light";
+				}
+				return "light";
+			}
+
+			// Apply theme immediately to prevent flash
+			const theme = getStoredTheme();
+			const actualTheme = theme === "auto" ? getSystemTheme() : theme;
+
+			if (actualTheme === "dark") {
+				document.documentElement.classList.add("dark");
+			} else {
+				document.documentElement.classList.remove("dark");
+			}
+		})();
+		</script>
+	</head>
+	<body
+		class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-mono leading-relaxed transition-colors"
+	>
+		<header
+			class="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 z-50"
+		>
+			<nav class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex justify-between items-center h-16">
+					<a
+						href="/"
+						class="text-lg font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+					>
+						ematipico
+					</a>
+					<div class="flex items-center space-x-6">
+						<!-- Desktop Navigation -->
+						<div class="hidden sm:flex items-center space-x-6">
+							<a
+								href="/"
+								class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+								>Home</a
+							>
+							<a
+								href="/about"
+								class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+								>About</a
+							>
+							<a
+								href="/projects"
+								class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+								>Projects</a
+							>
+							<a
+								href="/blog"
+								class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+								>Blog</a
+							>
+						</div>
+						<div class="flex-shrink-0"><ThemeSwitch /></div>
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<main
+			class:list={[
+				"mx-auto px-4 py-8 pb-20 sm:px-6 sm:pb-8 lg:px-8",
+				wide ? "max-w-6xl" : "max-w-4xl",
+			]}
+		>
+			<slot />
+		</main>
+
+		<footer class="mt-16 border-t border-gray-200 dark:border-gray-700">
+			<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+				<div
+					class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0"
+				>
+					<p class="text-sm text-gray-600 dark:text-gray-400">
+						© {currentYear} Emanuele Stoppa. All rights reserved.
+					</p>
+					<div class="flex space-x-4">
+						<a
+							href="https://github.com/ematipico"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+						>
+							GitHub
+						</a>
+						<a
+							href="https://linkedin.com/in/emanuelestoppa"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+						>
+							LinkedIn
+						</a>
+						<a
+							href="https://bsky.app/profile/ematipico.xyz"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+						>
+							Bluesky
+						</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Bottom Tab Bar for Mobile -->
+		<BottomTabBar currentPath={Astro.url.pathname} />
+	</body>
 </html>
